@@ -1,71 +1,46 @@
-# Clinical-Knowledge-Retrieval-System-Non-diagnostic-
-LLM+VD system to capture the semantic meaning behind complex medical queries | Project for CSE3232 | Team of 2
-# Clinical Knowledge Retrieval System (Non-diagnostic)
+# Clinical Knowledge Retrieval System (Non-Diagnostic)
 
-**A document-grounded medical knowledge base designed for precision-first information retrieval.**
+A full-stack RAG web application built with FastAPI, React, and ChromaDB. It ingests clinical PDFs, splits them into semantic chunks, generates embeddings using `SentenceTransformers`, and performs Non-Diagnostic Retrieval-Augmented Generation using a localized wrapper over Google Gemini representations.
 
----
+## Features
+- **PDF Upload:** Session-based uploads creating personalized vector spaces.
+- **Strict Guidelines:** The system is explicitly configured to NEVER provide diagnostic or therapeutic advice, defaulting to professional recommendations when prompted.
+- **Premium UI:** Animated cleanly via `framer-motion` and styled cleanly in soft blue/white clinical aesthetics.
 
-> [!CAUTION]
-> **Disclaimer:** This system does not provide medical advice. It is a technical tool designed to retrieve and synthesize information from user-uploaded research papers and clinical guidelines. All outputs should be verified against the original source citations provided.
-> [!CAUTION]
-> **Disclaimer:** This readme file is ai-generated however proof-read to ensure no missing or made-up details .
+## Tech Stack
+- FastAPI, Langchain Splitters, ChromaDB (Backend)
+- React, Vite, Tailwind CSS, Framer Motion (Frontend)
 
----
+## 🚀 How to Run
 
-## 📖 Overview
-
-Medical professionals and students often struggle to extract precise information from massive volumes of research papers and clinical guidelines. Traditional keyword-based searches frequently fail to capture the **semantic meaning** behind complex medical queries, leading to inefficiency and the potential for misinformation.
-
-This project implements a **RAG (Retrieval-Augmented Generation)** architecture that enables users to query medical literature using natural language while ensuring responses are strictly based on verified, uploaded sources.
-
-## 🏗️ Clean Architecture
-
-The system follows a modular pipeline to ensure data integrity and traceability:
-
-1.  **User Query:** Natural language input (e.g., "What are the contraindications for drug X in pediatric patients?").
-2.  **Embedding Model (OpenAI):** Converts the query into a high-dimensional vector.
-3.  **Vector Search (Pinecone):** Identifies the **Top-K Relevant Chunks** from the document database.
-4.  **LLM (Context-restricted Prompt):** Processes only the retrieved chunks to formulate a response.
-5.  **Verified Output:** Provides the answer accompanied by precise **Source Citations** and **Similarity Scores**.
-
----
-
-## ✨ Key Features
-
-### 1. Confidence Scores & Hallucination Guardrails
-To ensure safety, the system displays a **Similarity Score** for every retrieval. 
-* **Threshold Check:** If the Pinecone score is below a predefined threshold, the system returns: *“Insufficient information found in uploaded documents to answer this query accurately.”* ### 2. Semantic vs. Keyword Comparison
-The dashboard allows users to compare results against a standard TF-IDF keyword search. This demonstrates why vector-based retrieval is superior for capturing medical nuances that keywords often miss.
-
-### 3. Source Highlighting
-The system doesn't just answer; it points you to the evidence. It highlights the exact paragraph from the uploaded PDF used to generate the response, making verification effortless for researchers.
-
----
-
-## 🛠️ Tech Stack
-
-| Component | Tool |
-| :--- | :--- |
-| **LLM** | OpenAI API (GPT-4o) |
-| **Embeddings** | OpenAI text-embedding-3-small |
-| **Vector DB** | Pinecone |
-| **Orchestration** | LangChain |
-| **Backend** | Python + FastAPI |
-| **Frontend** | Streamlit |
-| **Storage** | Local PDF Uploads |
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-* Python 3.9+
-* OpenAI API Key
-* Pinecone API Key
-
-### Installation
-1. Clone the repository:
+### 1. Backend Setup
+1. Open a terminal to the `backend/` directory.
+2. We recommend creating a virtual environment:
    ```bash
-   git clone https://github.com/Risheeshh/Clinical-Knowledge-Retrieval-System-Non-diagnostic-.git
-   cd clinical-retrieval-system-non-diagnostic-
+   python -m venv venv
+   source venv/Scripts/activate # Windows
+   ```
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Create a `.env` file in the `backend/` directory from `.env.example` and place your Gemini API key inside.
+5. Start the backend:
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+   The backend will be live at `http://localhost:8000`.
+
+### 2. Frontend Setup
+1. Open a separate terminal to the `frontend/` directory.
+2. Install Node modules:
+   ```bash
+   npm install
+   ```
+3. Start the Vite development server:
+   ```bash
+   npm run dev
+   ```
+4. Open the displayed local host link (typically `http://localhost:5173`) in your browser.
+
+> Note: All uploads are isolated per web session so multiple users can query their respective PDFs independently!
