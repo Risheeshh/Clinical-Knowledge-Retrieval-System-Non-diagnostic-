@@ -22,7 +22,19 @@ async def upload_pdf(file: UploadFile = File(...)):
     try:
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to save file: {str(e)}")
+            
+        # Process PDF and store in Chroma
+        from ..services.pdf_processor import pdf_processor
+        from ..services.embedding_service import embedding_service
+        from ..services.chroma_service import chroma_service
         
-    return UploadResponse(session_id=session_id, message="File uploaded successfully")
+        chunks = pdf_processor.process_pdf(file_path)
+        if chunks:
+            texts = [c["text"] for c in chunks]
+            embeddings = embedding_service.generate_embeddings(texts)
+            chroma_service.store_chunks(session_id, chunks, embeddings)
+            
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to process file: {str(e)}")
+        
+    return UploadResponse(session_id=session_id, message=f"Processed {len(chunks)} chunks successfully.")
