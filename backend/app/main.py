@@ -19,6 +19,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from app.routes import upload
+app.include_router(upload.router, prefix="/api/upload", tags=["Upload"])
+
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the CKRS Backend API."}
