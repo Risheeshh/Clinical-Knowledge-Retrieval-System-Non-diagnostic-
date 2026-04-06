@@ -3,12 +3,21 @@ import faiss
 from google import genai
 from pypdf import PdfReader
 from sentence_transformers import SentenceTransformer
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 # -------- CONFIGURATION --------
-API_KEY = "AIzaSyCCKDr_B7gZZEXfheeOIeWv4TCJeVWBi2s"
-client = genai.Client(api_key=API_KEY)
-MODEL_NAME = "gemini-2.5-flash-lite"
 
+try:
+    from google import genai
+    client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+    MODEL_NAME = "gemini-2.5-flash-lite"
+    google_genai_available = True
+except Exception as e:
+    print(f"Failed to initialize google-genai: {e}")
+    client = None
+    google_genai_available = False
 # -------- LOCAL EMBEDDING MODEL --------
 embed_model = SentenceTransformer("all-MiniLM-L6-v2")
 
