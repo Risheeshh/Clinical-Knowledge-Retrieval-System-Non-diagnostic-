@@ -13,7 +13,7 @@ app = FastAPI(
 # Configure CORS for React frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, restrict to frontend URL
+    allow_origins=["https://clinical-knowledge-retrieval-system.vercel.app"], # In production, restrict to frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
