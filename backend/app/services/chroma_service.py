@@ -46,21 +46,21 @@ class ChromaService:
         context = "\n".join(results["documents"][0])
         return context
         
-    def get_sources(self, session_id: str, query_embedding: List[float], n_results: int = 3) -> List[Dict[str, Any]]:
+    def retrieve_full_results(self, session_id: str, query_embedding: List[float], n_results: int = 3) -> Dict[str, Any]:
         collection_name = f"session_{session_id}"
         try:
             collection = self.client.get_collection(name=collection_name)
         except Exception:
-            return []
+            return {"documents": [], "metadatas": []}
             
         results = collection.query(
             query_embeddings=[query_embedding],
             n_results=n_results
         )
         
-        if not results["metadatas"] or not results["metadatas"][0]:
-            return []
-            
-        return results["metadatas"][0]
+        return {
+            "documents": results.get("documents", [[]])[0] if results.get("documents") else [],
+            "metadatas": results.get("metadatas", [[]])[0] if results.get("metadatas") else []
+        }
 
 chroma_service = ChromaService()

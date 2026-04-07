@@ -11,6 +11,7 @@ class QueryRequest(BaseModel):
 class SourceMetadata(BaseModel):
     page: int
     source: str
+    text: str
 
 class QueryResponse(BaseModel):
     answer: str

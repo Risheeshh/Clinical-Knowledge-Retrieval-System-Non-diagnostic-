@@ -13,11 +13,21 @@ async def query_system(request: QueryRequest):
         query_emb = embedding_service.generate_embedding(request.query)
         
         # Retrieve context from Chroma
-        context = chroma_service.retrieve_context(request.session_id, query_emb, n_results=3)
+        results = chroma_service.retrieve_full_results(request.session_id, query_emb, n_results=3)
         
-        # Retrieve sources from Chroma
-        sources_meta = chroma_service.get_sources(request.session_id, query_emb, n_results=3)
-        sources = [{"page": meta.get("page", 0), "source": meta.get("source", "Unknown")} for meta in sources_meta]
+        docs = results["documents"]
+        metas = results["metadatas"]
+        
+        sources = []
+        for i in range(len(docs)):
+            meta = metas[i] if i < len(metas) else {}
+            sources.append({
+                "page": meta.get("page", 0),
+                "source": meta.get("source", "Unknown"),
+                "text": docs[i]
+            })
+            
+        context = "\n".join(docs)
         
         # Generate Answer
         if not context:
